@@ -18,7 +18,7 @@ class Page {
         const { btn_call,video_local } = this.UI;
         btn_call.addEventListener('click', e => {
             btn_call.disable = true;
-            const user = new User('ws://127.0.0.1:8007',Date.now() +'',this.stream,source => {
+            const user = new User('wss://www.yonechen.com/wss/',Date.now() +'',this.stream,source => {
                 const video_remote = document.createElement('video');
                 video_remote.autoplay = true;
                 video_remote.width = 600;
