@@ -1,0 +1,11 @@
+{
+  "name": "VRChat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/YoneChen/VRChat.git",
+  "author": "yonechen <yorkchan94@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^3.3.2"
+  }
+}
