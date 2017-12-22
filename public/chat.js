@@ -95,7 +95,6 @@ class User {
         };
         const peer = new RTCPeerConnection(config);
         peer.addEventListener('icecandidate',e => { //在stun查询到自己的ip外网地址时，发送给 token用户
-            if (!e.candidate) return;
             const msg = {
                 msg_type: 'CANDIDATE',
                 token,
@@ -118,10 +117,10 @@ class User {
         this.peerSets[token] = peer;
     }
     addCandidate(token,icecandidate) {
-        const peer = this.peerSets[token];
-        peer.addIceCandidate(new RTCIceCandidate(icecandidate))
-        .then(() => console.log(token + 'add IceCandidate Success'))
-        .catch(err => console.warn(err));
+        try {
+            const peer = this.peerSets[token];
+            peer.addIceCandidate(new RTCIceCandidate(icecandidate));
+        } catch(err) {console.warn(err) };
     }
     async offer(token) { // 我是请求方 发起offer并设置本身的SDP信息
         // const {peerSets,ws,state,userID} = this;
