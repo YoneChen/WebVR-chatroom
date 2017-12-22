@@ -118,7 +118,9 @@ class User {
     }
     addCandidate(token,icecandidate) {
         const peer = this.peerSets[token];
-        peer.addIceCandidate(new RTCIceCandidate(icecandidate));
+        peer.addIceCandidate(new RTCIceCandidate(icecandidate))
+        .then(() => console.log(token + 'add IceCandidate Success'))
+        .catch(err => console.warn(err));
     }
     async offer(token) { // 我是请求方 发起offer并设置本身的SDP信息
         // const {peerSets,ws,state,userID} = this;
