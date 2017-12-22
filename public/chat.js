@@ -95,6 +95,7 @@ class User {
         };
         const peer = new RTCPeerConnection(config);
         peer.addEventListener('icecandidate',e => { //在stun查询到自己的ip外网地址时，发送给 token用户
+            if (!e.candidate) return;
             const msg = {
                 msg_type: 'CANDIDATE',
                 token,
