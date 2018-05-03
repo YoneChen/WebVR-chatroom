@@ -1,0 +1,30 @@
+.load-control {
+	transition: opacity 1s 1s;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	background-color: #333;
+	z-index: 1000;
+}
+.svg-load {
+	width: 150px;
+	height: 150px;     
+}
+.svg-load circle {
+		fill: none;
+		stroke: #00aadd;
+		stroke-width: 2px;
+		display: none;
+	}
+.svg-load text {
+		fill: #fff;
+		font-size: 12px
+	}
+.loaded {
+	opacity: 0;
+}
