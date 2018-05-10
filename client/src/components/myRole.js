@@ -22,7 +22,7 @@ class MyRole extends Object3D {
             const loader = new THREE.GLTFLoader();
             loader.load(MODEL_PATH, data => {
                 const object3d = data.scene;
-                // object3d.position.set(0,-2,-5);
+                // object3d.position.set(0,-2,-5);//
                 object3d.rotation.set(0,Math.PI,0);
                 this.headBone = object3d.getObjectByName(HEAD_BONE_NAME); 
                 debugger
@@ -32,5 +32,6 @@ class MyRole extends Object3D {
             });
         });
     }
+    
 }
 export default MyRole;
