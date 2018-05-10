@@ -93,6 +93,7 @@ module.exports = {
       root: path.resolve(__dirname, '..')
     }),
   ],
+  devtool: 'inline-source-map',
   devServer: {
     historyApiFallback: true,
     open: true,
