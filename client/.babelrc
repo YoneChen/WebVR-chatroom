@@ -1,12 +1,12 @@
 {
-  "presets": [
-    ["env", {
-      "modules": false,
-      "loose": true
-    }]
-  ],
-  "plugins":[
+  "presets": ["env","stage-0"],
+  "env": {
+      "targets": {
+        "chrome": 40
+      }
+  },
+  "plugins": [
     "transform-runtime",
-    "syntax-dynamic-import"
+    "transform-async-generator-functions"
   ]
 }

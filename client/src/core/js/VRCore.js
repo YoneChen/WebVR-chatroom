@@ -20,7 +20,7 @@
 		 cleanPage();
 	 })
  }
- function createScene(container=document.body,fov=70,far=4000) {
+ function createScene(container=document.body,fov=70,far=5000) {
 	 if (!(container instanceof HTMLElement)) {
 		 throw new Error('container is not a HTMLElement!');
 	 }
