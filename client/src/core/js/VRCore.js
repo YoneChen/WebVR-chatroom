@@ -3,7 +3,7 @@
  import '@/core/css/main.css';
  import VRButton from './VRButton';
  import Router from './VRRouter';
- import GazeEvent from 'gaze-event';
+ import VRGaze from './VRGaze';
  let 
 	 //public props
 	 Scene, // THREE.Scene
@@ -39,7 +39,7 @@
 	 initVR();
 	 initAudio();
 	 bindEvent();
-	 Gazer = new GazeEvent();
+	 Gazer = new VRGaze();
 	 addCrossHair();
  }
 
@@ -85,7 +85,7 @@
 	 loader.rotation.set(0, Math.PI, Math.PI / 2);
 	 loader.name = 'loader';
 	 CrossHair = new THREE.Group();
-	 CrossHair.add(pointer);
+	//  CrossHair.add(pointer);
 	 CrossHair.add(loader);
 	 CrossHair.position.z = -0.5;
 	 CrossHair.matrixAutoUpdate = false;

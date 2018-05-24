@@ -1,42 +1,49 @@
 const {Object3D} = THREE;
-import '@/lib/GLTFLoader';
-const MODEL_PATH = 'model/robot/robot.gltf';
+import {getGLTFModel} from '@/utils/common';
+const MODEL_ROBOT_PATH = 'model/robot/robot.gltf';
+const MODEL_PLATFORM_PATH = 'model/platform/scene.gltf'
 const HEAD_BONE_NAME = 'Armature_head_neck_lower';
 class OtherRole extends Object3D {
     constructor() {
         super();
-        this._loadModel();
+        this._init();
     }
-    setTransforms({rotation,position}) {
-            const { headBone,object3d } = this;
-            if (!headBone || !object3d) return;
-            this.headBone.rotation.set( rotation );
-            this.object3d.position.set( position );
-            // this.updateMatrix();
-    }
-    // update() {
-    //     const {camera,headBone,object3d} = this;
-    //     if (!headBone || !camera || !object3d) return;
-    //     this.headBone.quaternion.fromArray( camera.quaternion );
-    //     this.object3d.position.fromArray( camera.position );
-    //     this.updateMatrix();
-    // }
-    async _loadModel() {
-        return new Promise(resolve => {
-            const loader = new THREE.GLTFLoader();
-            loader.load(MODEL_PATH, data => {
-                const object3d = data.scene;
-                this.headBone = object3d.getObjectByName(HEAD_BONE_NAME); 
-                this.add(object3d);
-                // object3d.position.set(0,-4,-2);
-                // object3d.position.set(0,0,-12);
-                this.object3d = object3d;
-                // object3d.rotation.set(0,Math.PI,0);
-                // role.position.set(position.x,position.y,position.z);
-                // headBone.rotation.set(rotation.x,rotation.y,rotation.z);
-                resolve(object3d);
-            });
+    async _init() {
+        return Promise.all([this._initRobot(),this._initPlatform()])
+        .then(() => {
+            this.group = new THREE.Group();
+            this.group.add(this.robot);
+            this.group.add(this.paltform);
+            this.add(this.group);
+            this._loaded();
         });
+    }
+    _loaded() {}
+    async _initRobot() {
+        const {scene: model} = await getGLTFModel(MODEL_ROBOT_PATH);
+        model.rotation.set(0,Math.PI,0);
+        model.scale.set(5,5,5);        
+        model.position.set(0,-15,3);
+        this.headBone = model.getObjectByName(HEAD_BONE_NAME); 
+        this.robot = model;
+    }
+    async _initPlatform() {
+        const {scene: model} = await getGLTFModel(MODEL_PLATFORM_PATH);
+        model.scale.set(0.01,0.01,0.01);
+        model.position.set(0,-17,3);
+        this.paltform = model;
+    }
+    onLoad(callback) {
+        this._loaded = callback;
+    }
+    update({rotation,position}) {
+        const {headBone,group} = this;
+        if (!headBone || !group) return;
+        this.headBone.rotation.set( rotation.y,0,rotation.x );
+        this.group.rotation.set(0,rotation.y,0);
+        this.group.position.set(position.x,position.y,position.z);
+        this.updateMatrix();
+        this.visible = true;
     }
 }
 export default OtherRole;
