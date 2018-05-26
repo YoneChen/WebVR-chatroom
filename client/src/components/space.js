@@ -3,41 +3,67 @@
  */
 const {Object3D} = THREE;
 class Space extends Object3D {
-    constructor({num,size,area}) {
+    constructor({num,size,area,color}) {
         super();
-        const universe_group = new THREE.Group();
-        universe_group.add(this.createParticles(num,size,area));
+		const universe_group = new THREE.Group();
+		this.area = area;
+		this.minArea = area / 2;
+		this._area_half = area / 2;
+		// this._minArea_half = minArea / 2;
+        universe_group.add(this.createParticles(num,size,area,color));
         this.add(universe_group);
     }
-	createParticles(num,size,area) { // 创建粒子系统
+	createParticles(num,size,area,color) { // 创建粒子系统
 		let drawArc = () => {
 			// 创建画布
 			const canvas = document.createElement('canvas');
-			canvas.width	= 100;
-			canvas.height	= 100;
+			canvas.width = 100;
+			canvas.height = 100;
 			const ctx = canvas.getContext('2d');
-			ctx.beginPath();
-			ctx.arc(50,50,50, 0 ,2*Math.PI,true);
-			ctx.fillStyle = "#ffffff";
-			ctx.fill();
+			// ctx.beginPath();
+			// ctx.arc(50,50,50, 0 ,2*Math.PI,true);
+			// ctx.fillStyle = color;
+			// ctx.fill();
+			// ctx.closePath();
+			var radial = ctx.createRadialGradient(50,50,20,50,50,50);
+			radial.addColorStop(0,color);
+			radial.addColorStop(1,'rgba(255,255,255,0)');
+			
+			ctx.fillStyle = radial;
+			ctx.fillRect(0,0,100,100);
 			return canvas;
 		};
-		let texture = new THREE.Texture(drawArc());
+		let texture = new THREE.CanvasTexture(drawArc());
 		// texture.needsUpdate = true;
 		let geometry = new THREE.Geometry();
 		for (let i = 0; i < num; i ++ ) {
-
-			let vertex = new THREE.Vector3();
-			vertex.x = Math.random() * area - area/2;
-			vertex.y = Math.random() * area - area/2;
-			vertex.z = Math.random() * area - area/2;
+			let vertex = new THREE.Vector3(...this._randomVector);
 
 			geometry.vertices.push( vertex );
 
 		}
-		this.material = new THREE.PointsMaterial( { size: size,color: 0xffffff ,sizeAttenuation:false, transparent: true } );
+		this.material = new THREE.PointsMaterial( { size,map: texture ,sizeAttenuation:false, transparent: true } );
 		let particles = new THREE.Points(geometry,this.material);
 		return particles;
+	}
+	get _random() {
+		return (Math.random() - 0.5) * this.area; 
+	}
+	get _randomVector() { 
+		let x = this._random;
+		let y = this._random;
+		let z = this._random;
+		const arr = [x,y,z];
+		for(let i = 0; i < 3; i++) {
+			if (Math.abs(arr[i]) > this.minArea) return arr;
+		}
+		const j = Math.floor(Math.random() * 3);
+		const s = arr[j] > 0 ? 1 : -1;
+		arr[j] = s * this.minArea + s * (this.area - this.minArea)/2 *arr[j]/this.minArea;
+		return arr;
+	}
+	_checkRandom(x,y,z) {
+		return Math.abs(val) < this.minArea/2;
 	}
     // update() {
 

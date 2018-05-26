@@ -29,3 +29,26 @@ export async function getOBJModel(OBJ_path,MTL_path) {
         });
     });
 }
+export function getTexture({
+    text, 
+    backgroundColor,
+    fontSize,
+    fontColor,
+    width,
+    height
+}) {
+    let canvas = document.createElement('canvas');
+    const _width =  width * 100, _height =  height * 100;
+    canvas.width =_width, canvas.height = _height;
+    let ctx = canvas.getContext('2d');
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, _width, _height);
+    ctx.fillStyle = fontColor;
+    ctx.font = `${fontSize * 100}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, _width / 2, _height / 2);
+    let texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+}
