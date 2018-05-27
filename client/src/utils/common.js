@@ -3,6 +3,7 @@
 import '@/lib/GLTFLoader';
 import '@/lib/OBJLoader';
 import '@/lib/MTLLoader';
+import '@/lib/ColladaLoader';
 export async function getGLTFModel(path) {
     return new Promise(resolve => {
         const loader = new THREE.GLTFLoader();
@@ -26,6 +27,14 @@ export async function getOBJModel(OBJ_path,MTL_path) {
 
             } );
 
+        });
+    });
+}
+export async function getDAELoader(path) {
+    return new Promise(resolve => {
+        const loader = new THREE.ColladaLoader();
+        loader.load(path, data => {
+            resolve(data);
         });
     });
 }

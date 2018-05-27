@@ -6,20 +6,20 @@ class Room {
         this._userDataSet = {};
         this.roleDataSet = [
             {
-                position: { x: 0, y: 0, z: 0},
+                position: { x: 0, y: 0, z: 8},
                 rotation: {x: 0, y: 0, z: 0}
             },
             {
-                position: { x: 2, y: Math.PI, z: 2},
-                rotation: {x: 0, y: 0, z: 0}
+                position: { x: 0, y: 0, z: -8},
+                rotation: {x: 0, y: Math.PI, z: 0}
             },
             {
-                position: { x: 0, y: 0, z: -2},
-                rotation: {x: 0, y: 0, z: 0}
+                position: { x: -8, y: 0, z: 8},
+                rotation: {x: 0, y: Math.PI/2, z: 0}
             },
             {
-                position: { x: -2, y: 0, z: 0},
-                rotation: {x: 0, y: 0, z: 0}
+                position: { x: 8, y: 0, z: 0},
+                rotation: {x: 0, y: Math.PI/-2, z: 0}
             }
         ];
     }

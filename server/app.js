@@ -48,7 +48,7 @@ function sendMsg(wss,ws,msg) { // 转发数据，将数据转发给对应userId�
     if (msg.userId) {
         const client = Array.from(wss.clients).filter(client => client.userId === msg.userId)[0];
         msg.userId = ws.userId;
-        client.send(JSON.stringify(msg));
+        if(client) client.send(JSON.stringify(msg));
     } else {
         msg.userId = ws.userId;
         broadcast(wss,ws,msg);

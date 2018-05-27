@@ -17,14 +17,15 @@ class Chatroom extends VRPage {
     }
     start() {
         this.roleSet = {};
+        this.otherDataList = [];
         const { MODEL_ROBOT } = this.assets;
-        const exitButton = new Button({text: 'Exit'});
-        exitButton.position.set(0,0,-10);
+        const exitButton = new Button({text: 'Exit', fontSize: 2, width: 5, height: 3});
+        exitButton.position.set(0,0,-15);
         WebVR.Scene.add(exitButton);
         this.addSpace();
         // this.addPlatform();
         // this.addSpaceShip();
-        this.addSpaceStation();
+        // this.addSpaceStation();
         // this.addGalaxy();
         // this.addPlanet();
         // this.addButton({
@@ -38,10 +39,10 @@ class Chatroom extends VRPage {
         const url = 'ws://127.0.0.1:8086';
         this.userRtc = new UserRTC({
             url,
-            IJoin: this.addRoles.bind(this),
+            IJoin: this.addAllRoles.bind(this),
             otherJoin: this.addOtherRole.bind(this),
-            receiveRoleInfo: this.updateOtherRole.bind(this),
-            peerConnected: this.addRoleAudio.bind(this),
+            receiveRoleInfo: this.receiveRoleInfo.bind(this),
+            peerConnected: this.audioLoaded.bind(this),
             peerDisconnected: this.removeOtherRole.bind(this)
         });
         // this.audioCtx = new AudioContext();
@@ -51,19 +52,23 @@ class Chatroom extends VRPage {
         // play the sound
         //  this.envSound.play();
     }
-    async addRoles({roleData,otherDataList}) {
+    addAllRoles({roleData,otherDataList}) { // 添加角色
         this.addMyRole(roleData);
-        otherDataList.forEach(({userId,roleData}) => {
-            this.addOtherRole({userId,roleData});
-        });
+        this.addOtherRoles(otherDataList)
     }
     addMyRole(roleData) {
         this.me = new MyRole(WebVR.Camera);
         // this.me.add(WebVR.Camera)
         this.initRole(this.me,roleData);
     }
+    addOtherRoles(otherDataList) {
+        otherDataList.forEach(({userId,roleData}) => {
+            this.addOtherRole({userId,roleData});
+        });
+    }
     addOtherRole({userId,roleData}) {
         const role = new OtherRole();
+        role.name = userId;
         this.initRole(role,roleData);
         this.roleSet[userId] = { model: role };
     }
@@ -95,68 +100,32 @@ class Chatroom extends VRPage {
         WebVR.Scene.add(stars2);
         WebVR.Scene.add(stars3);
     }
-    addPlatform() {
-        const platform = new Platform();
-        platform.position.set(0,-10,0);
-        WebVR.Scene.add(platform);
+    updateAllRoles() {
+        this.updateMyRole();
+        this.updateOtherRoles();
     }
-    addSpaceShip() {
-        const {MODEL_SPACESHIP1,MODEL_SPACESHIP2} = this.assets;
-        const spaceship1 = new Spaceship(MODEL_SPACESHIP1);
-        spaceship1.onLoad(() => {
-            spaceship1.animations.fly({ x: -2000, y: 300, z: -200 },{ x: 2000, y: 300, z: -200 },20000);
-        });
-        WebVR.Scene.add(spaceship1);
-        const spaceship2 = new Spaceship(MODEL_SPACESHIP2);
-        spaceship2.scale.set(20,20,20);
-        spaceship2.onLoad(() => {
-            spaceship2.animations.fly({ x: 2000, y: -200, z: -200 },{ x: -2000, y: -200, z: 200 },50000);
-        });
-        WebVR.Scene.add(spaceship2);
+    updateMyRole() {
+        if(!this.me) return;
+        this.me.update();
+        this.sendMyRoleInfo();
     }
-    addSpaceStation() {
-        const spacestation = new Spacestation();
-        spacestation.position.set(120,-50, 150);
-        spacestation.onLoad(() => {
-            spacestation.animations.rotate(10000);
-        });
-        WebVR.Scene.add(spacestation);
+    updateOtherRoles() {
+        Object.keys(this.roleSet).forEach(userid => {
+            const {model} = this.roleSet[userid];
+            model.update();
+        })
     }
-    addGalaxy() {
-        const galaxy = new Galaxy();
-        galaxy.position.set(0,1000,0);
-        galaxy.rotation.set(-Math.PI/4,0,0);
-        galaxy.animations.rotate(60000);
-        WebVR.Scene.add(galaxy);
-    }
-    addPlanet() {
-        const planet = new Planet();
-        planet.position.set(1000,500,80);
-        planet.animations.rotate(50000);
-        WebVR.Scene.add(planet);
-    }
-    updateOtherRole({userId,roleData}) {
-        const {model,speaker} = this.roleSet[userId];
+    receiveRoleInfo({userId,roleData}) {
+        const {model} = this.roleSet[userId];
         if (!model) return;
-        const {position,rotation} = roleData;
-        model.setTransforms({
-            position,
-            rotation
-        });
-        if(speaker) speaker.update(roleData.position);
+        model.roleInfo = roleData;
+        // if(speaker) speaker.update(roleData.position);
     }
     removeOtherRole(userId) {
         const {model} = this.roleSet[userId];
         if (!model) return;
         WebVR.Scene.remove(model);
         delete this.roleSet[userId];
-    }
-    addPanorama(radius, path) {
-        // create panorama
-        const geometry = new THREE.SphereGeometry(radius, 50, 50);
-        const material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(path), side: THREE.BackSide });
-        const panorama = new THREE.Mesh(geometry, material);
-        WebVR.Scene.add(panorama);
     }
     addEnvAudio(path) {
         // instantiate audio object
@@ -191,72 +160,17 @@ class Chatroom extends VRPage {
         light.shadow.camera.far = 500;
         WebVR.Scene.add(light);
     }
-    addButton({ text, index, fontSize = 64, callback = () => { } }) {
-        const option = {
-            hover: 5,
-            camera: WebVR.Camera,
-            radius: 25,
-            angle: Math.PI / 6 * index,
-            width: 10,
-            height: 7.5
-        };
-        let hx = option.hover * Math.sin(option.angle), hz = option.hover * Math.cos(option.angle);
-        let geometry = new THREE.PlaneGeometry(option.width, option.height);
-        let material = new THREE.MeshBasicMaterial({ map: this.getTexture(text, 32), opacity: 0.75, transparent: true });
-        let button = new THREE.Mesh(geometry, material);
-        let cx = option.camera.position.x,
-            cy = option.camera.position.y,
-            cz = option.camera.position.z;
-        let dx = option.radius * Math.sin(option.angle),
-            dz = option.radius * Math.cos(option.angle);
-        button.position.set(cx + dx, cy, cz - dz);
-        button.rotation.y = -option.angle;
-
-        WebVR.Scene.add(button);
-        WebVR.Gazer.on(button, 'gazeEnter', m => {
-            button.scale.set(1.2, 1.2, 1.2);
-            WebVR.CrossHair.animate.loader.start();
-        });
-        WebVR.Gazer.on(button, 'gazeLeave', m => {
-            button.scale.set(1, 1, 1);
-            WebVR.CrossHair.animate.loader.stop();
-        });
-        WebVR.Gazer.on(button, 'gazeWait', m => {
-            WebVR.CrossHair.animate.loader.stop();
-            callback();
-        });
+    audioLoaded({userId,stream}) {
+        const {model} = this.roleSet[userId];
+        model.audioStream = stream;
     }
-    addRoleAudio({userId,stream}) { // 加入声音
-        const {audioCtx} = this;
-        // // create the PositionalAudio object (passing in the listener)
-        var sound = new THREE.PositionalAudio( WebVR.AudioListener );
-        // // const audioCtx = THREE.AudioContext.getContext();
-        // var url = URL.createObjectURL(stream);
-        // var audio = new Audio(url);
-        // // audio.autoplay = true;
-        const source = sound.context.createMediaStreamSource(stream);
-        // // load a sound and set it as the PositionalAudio object's buffer
-        sound.setNodeSource(source);
-        sound.autoplay = true;
-        // const role = this.roleSet[userId];
-        // // finally add the sound to the mesh
-        // role.add( sound );
-        
-        // this.roleSet[userId].speaker = new Speaker(audioCtx,stream);
-    }
-    sendMyRoleInfo() { // 更新自己的角色行为
-        if (!this.myRole) return;
-        this.userRtc.sendRoleInfo({
-            rotation: { x: role.rotation.x, y: role.rotation.y, z: role.rotation.z },
-            position: { x: role.position.x, y: role.position.y, z: role.position.z },
-        });
+    sendMyRoleInfo() { // 发送自己的角色行为
+        console.log(this.me.roleInfo)
+        this.userRtc.sendRoleInfo(this.me.roleInfo);
         // this.listener.update(role.position,role.quaternion);
     }
     update() {
-        if(this.me) {
-            this.sendMyRoleInfo();
-            this.me.update();
-        }
+        this.updateAllRoles();
         // if(this.ball)this.ball.rotation.set(WebVR.Camera.rotation.x,WebVR.Camera.rotation.y,WebVR.Camera.rotation.z);
     }
 }

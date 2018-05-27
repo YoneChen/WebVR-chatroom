@@ -1,11 +1,15 @@
 const {Object3D} = THREE;
 import {getGLTFModel} from '@/utils/common';
-const MODEL_ROBOT_PATH = 'model/robot/robot.gltf';
+const MODEL_ROBOT_PATH = 'model/robot/scene.gltf';
 const MODEL_PLATFORM_PATH = 'model/platform/scene.gltf'
 const HEAD_BONE_NAME = 'Armature_head_neck_lower';
 class MyRole extends Object3D {
     constructor(camera) {
         super();
+        this._roleInfo = {
+            rotation: {x:0,y:0,z:0},
+            position: {x:0,y:0,z:0}
+        }
         this.camera = camera;
         this._init();
     }
@@ -42,12 +46,26 @@ class MyRole extends Object3D {
         const {camera,headBone,group} = this;
         if (!headBone || !camera || !group) return;
         const {rotation,position} = camera;
+        this.roleInfo = {
+            rotation: { x: rotation.x, y: rotation.y, z: rotation.z },
+            position: { x: position.x, y: position.y, z: position.z }
+        }
+        this._updateModel();
+    }
+    _updateModel() {
+        const {position,rotation} = this.roleInfo;
         this.headBone.rotation.set( rotation.y,0,rotation.x );
         this.group.rotation.set(0,rotation.y,0);
         this.group.position.set(position.x,position.y,position.z);
         // this.object3d.position.fromArray( camera.position );
         this.updateMatrix();
         this.visible = true;
+    }
+    set roleInfo(val) {
+        this._roleInfo = val;
+    }
+    get roleInfo() {
+        return this._roleInfo
     }
 }
 export default MyRole;
