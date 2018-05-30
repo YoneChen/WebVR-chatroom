@@ -6,7 +6,6 @@
       }
   },
   "plugins": [
-    "transform-runtime",
-    "transform-async-generator-functions"
+    "transform-runtime"
   ]
 }

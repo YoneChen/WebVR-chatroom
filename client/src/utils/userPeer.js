@@ -1,7 +1,7 @@
 
 import 'webrtc-adapter';
 const noop = () => {};
-class UserRTC {
+class UserPeer {
     constructor({ url,IJoin = noop,otherJoin = noop,peerConnected = noop,peerDisconnected = noop,receiveRoleInfo = noop }) {
         this.url = url;
         this.IJoinCallback = IJoin;
@@ -59,15 +59,9 @@ class UserRTC {
     addPeer(userId) {
         const {stream,peerConnectedCallback,peerDisconnectedCallback,receiveRoleInfoCallback} = this;
         const config = {
-            'iceServers': [{ 'url': 'stun:stun.services.mozilla.com' }, { 'url': 'stun:stunserver.org' },
+            'iceServers': [{ 'urls': 'stun:stun.services.mozilla.com' }, { 'urls': 'stun:stunserver.org' },
             {
-                'url': 'turn:119.29.119.131:3478?transport=tcp',
-                "username": "yonechen",
-                "credential": "yonechen",
-                credentialType: 'password'
-            },
-            {
-                'url': 'turn:119.29.119.131:3478?transport=udp',
+                'urls': ['turn:119.29.119.131:3478?transport=tcp','turn:119.29.119.131:3478?transport=udp'],
                 "username": "yonechen",
                 "credential": "yonechen",
                 credentialType: 'password'
@@ -161,4 +155,4 @@ class UserRTC {
         this.ws.send(JSON.stringify(msg));
     }
 }
-export default UserRTC;
+export default UserPeer;

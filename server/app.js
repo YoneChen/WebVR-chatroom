@@ -46,7 +46,7 @@ function connectionFeedback(wss,ws) {
 }
 function sendMsg(wss,ws,msg) { // 转发数据，将数据转发给对应userId接收方，并将发送方userId传给接收方
     if (msg.userId) {
-        const client = Array.from(wss.clients).filter(client => client.userId === msg.userId)[0];
+        const client = Array.from(wss.clients).find(client => client.userId === msg.userId);
         msg.userId = ws.userId;
         if(client) client.send(JSON.stringify(msg));
     } else {
