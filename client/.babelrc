@@ -1,11 +1,6 @@
 {
   "presets": ["env","stage-0"],
-  "env": {
-      "targets": {
-        "chrome": 40
-      }
-  },
-  "plugins": [
+  "plugins":[
     "transform-runtime"
   ]
 }

@@ -1,4 +1,4 @@
-import '@/core/css/load-control';
+import './css/load-control';
 export default class LoadControl {
 	constructor(radius = 37.5) {
 		this.radius = radius;

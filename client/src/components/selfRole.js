@@ -4,13 +4,13 @@ const MODEL_ROBOT_PATH = 'model/robot/scene.gltf';
 const MODEL_PLATFORM_PATH = 'model/platform/scene.gltf'
 const HEAD_BONE_NAME = 'Armature_head_neck_lower';
 class MyRole extends Object3D {
-    constructor(camera) {
+    constructor(root) {
         super();
+        this.camera = root.camera;
         this._roleInfo = {
             rotation: {x:0,y:0,z:0},
             position: {x:0,y:0,z:0}
         }
-        this.camera = camera;
         this._init();
     }
     async _init() {

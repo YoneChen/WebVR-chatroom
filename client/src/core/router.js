@@ -8,18 +8,18 @@
         this._proxyRouter();
         this._historyProxy();
     },
-    onchange(callback) {
-        this.callback = callback;
-    },
+
+    onchange() {},
+    onload(component) {},
     // fetch and run page script
     push(routeName) {
-        this.callback();
+        this.onchange();
         history.pushState({ routeName },0,routeName);
         this._loadComponent(routeName);
     },
     // fetch and run page script
     replace(routeName) {
-        this.callback();
+        this.onchange();
         history.replaceState({ routeName },0,routeName);
         this._loadComponent(routeName);
     },
@@ -35,7 +35,7 @@
     // when go back or go forward,run pre-page script.
     _historyProxy() {
         window.addEventListener('popstate',e => {
-            this.callback();
+            this.onchange();
             const routeName = e.state.routeName;
             this._loadComponent(routeName);
         },false);
@@ -44,15 +44,16 @@
         return location.pathname.split('/').pop() || '';
     },
     _loadComponent(routeName) {
-        const component = this._getComponent(routeName);
-        this._initComponent(component);
+        const componentName = this._getComponentName(routeName);
+        this._initComponent(componentName).then(component => { this.onload(component) } );
     },
-    _getComponent(routeName) {
+    _getComponentName(routeName) {
         return this.routeObj[routeName.replace(/^\//,'')] || '';
     },
     async _initComponent(importComponent) {
        const mo = await importComponent();
-       new mo.default();
+       const component = new mo.default();
+       return component;
     }
 };
 export default Router;

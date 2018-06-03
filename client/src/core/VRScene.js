@@ -1,27 +1,35 @@
- /*global THREE:true*/
- /*global WebVR:true*/
- import LoadControl from '@/core/js/loadControl';
- export default class VRPage {
+/*global THREE:true*/
+import { root, renderStart } from './core';
+const { Scene } = THREE;
+import LoadControl from './loadControl';
+class VRScene extends Scene {
+	 constructor() {
+		 super();
+		 this.root = root;
+		 this.LoaderCount = 0;
+		 this.assets = this.assets();
+		 this._initPage();
+	 }
 	 assets() {
 		 return {};
 	 }
-	 constructor() {
-		 this.LoaderCount = 0;
-		 this.assets = this.assets();
-		 this.initPage();
+	 start() {
 	 }
-	 initPage() {
-		 this.loadPage();
+	 loaded() {}
+	 update() {
+	 }
+	 _initPage() {
+		 this._loadPage();
 		 this.start();
 	 }
-	 loadPage() {
+	 _loadPage() {
 		 let flag = true;
 		 const _managerLoaded = () => {
 			if(this.loadControl) this.loadControl.loadedAll();
 			setTimeout(() => {
 				this.loaded();
 				manager = null;
-				WebVR.renderStart(this.update.bind(this));
+				renderStart(this.update.bind(this));
 			},100);
 			console.log('finish');
 		 };
@@ -29,9 +37,9 @@
 			_managerLoaded();
 			return;
 		 }
-		 var manager = THREE.DefaultLoadingManager;
+		 let manager = THREE.DefaultLoadingManager;
 		 this.loadControl = new LoadControl();
-		 if (WebVR.Display && WebVR.Display.isPresenting) {
+		 if (this.root.display && this.root.display.isPresenting) {
 			 this.loadControl.doubleDom();
 		 }
 		 manager.onProgress = (url, itemsLoaded, itemsTotal ) => {
@@ -42,9 +50,5 @@
 		 };
 		 manager.onLoad = _managerLoaded.bind(this);
 	 }
-	 start() {
-	 }
-	 loaded() {}
-	 update() {
-	 }
  }
+ export default VRScene

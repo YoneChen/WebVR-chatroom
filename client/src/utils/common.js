@@ -12,9 +12,10 @@ export async function getGLTFModel(path) {
         });
     });
 }
-export async function getOBJModel(OBJ_path,MTL_path) {
+export async function getOBJModel(path,OBJ_path,MTL_path) {
     return new Promise(resolve => {
         const mtlLoader = new THREE.MTLLoader();
+		mtlLoader.setTexturePath(path);
         mtlLoader.load( MTL_path,  materials => {
 
             materials.preload();

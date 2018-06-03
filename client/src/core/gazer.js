@@ -51,8 +51,10 @@ class VRGaze {
             this.rayList[target.id][eventType] = noop;
         }
     }
-    clear() {
-        this.rayList = {}, this.targetList = [];
+    /** Remove all the target listeners. */
+    removeAll() {
+        this._lastTarget && this._lastTarget.id in this.rayList && this.rayList[this._lastTarget.id].gazeLeave(this._intersection);
+        this.rayList = {}, this.targetList = [],this._lastTarget = null;
     }
     update(camera) {
         if (this.targetList.length <= 0) return;
@@ -77,7 +79,9 @@ class VRGaze {
             this._lastTarget = currentTarget;
         } else {
             // 如果是离开物体，则触发gazeLeave
-            if (this._lastTarget) this.rayList[this._lastTarget.id].gazeLeave(this._intersection);
+            if (this._lastTarget) {
+                this._lastTarget.id in this.rayList && this.rayList[this._lastTarget.id].gazeLeave(this._intersection);
+            }
             this._intersection = null;
             this._lastTarget = null;
         }

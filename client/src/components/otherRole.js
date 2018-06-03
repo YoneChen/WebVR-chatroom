@@ -4,8 +4,9 @@ const MODEL_ROBOT_PATH = 'model/robot/scene.gltf';
 const MODEL_PLATFORM_PATH = 'model/platform/scene.gltf'
 const HEAD_BONE_NAME = 'Armature_head_neck_lower';
 class OtherRole extends Object3D {
-    constructor() {
+    constructor(root) {
         super();
+        this.audioListener = root.audioListener;
         this.name = '';
         this._isLoaded = false;
         this._roleInfo = {
@@ -64,7 +65,7 @@ class OtherRole extends Object3D {
     }
     _addAudio(stream) { // 加入声音
         // // create the PositionalAudio object (passing in the listener)
-        var sound = new THREE.PositionalAudio( WebVR.AudioListener );
+        var sound = new THREE.PositionalAudio( this.audioListener );
         // // const audioCtx = THREE.AudioContext.getContext();
         // var url = URL.createObjectURL(stream);
         // var audio = new Audio(url);
@@ -109,6 +110,12 @@ class OtherRole extends Object3D {
     }
     get audioStream() {
         return this._stream;
+    }
+    set audioListener(val) {
+        this._audioListener = val;
+    }
+    get audioListener() {
+        return this._audioListener;
     }
 }
 export default OtherRole;

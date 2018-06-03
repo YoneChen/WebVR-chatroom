@@ -7,7 +7,6 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
 
   entry: {
-    'vendor': path.resolve(__dirname,'./src/core/js/vendor.js'),
     'app': path.resolve(__dirname,'./src/index.js')
   },
 
@@ -76,7 +75,6 @@ module.exports = {
     new ProvidePlugin({
       'THREE': 'three',
       'TWEEN': '@tweenjs/tween.js',
-      'WebVR':path.resolve(__dirname,'./src/core/js/VRCore.js')
     }),
     new CopyWebpackPlugin([
       // {output}/file.txt
@@ -90,17 +88,16 @@ module.exports = {
       favicon: path.resolve(__dirname, './src/favicon.ico')
     }),
     new CleanWebpackPlugin(['dist'], {
-      root: path.resolve(__dirname, '..')
+      root: path.resolve(__dirname, './')
     }),
   ],
-  devtool: 'inline-source-map',
   devServer: {
-    historyApiFallback: true,
     open: true,
     overlay: {
       warnings: true,
       errors: true
     },
+    historyApiFallback: true,
     port: 9000,
     inline: true
   }

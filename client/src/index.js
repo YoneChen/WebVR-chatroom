@@ -1,8 +1,8 @@
-/*global WebVR:true*/
+import WebVRApp from '@/core'
 // create routers map 
-WebVR.init([
+WebVRApp.create([
     {
-        path: '/', // e.g http://127.0.1:9000/1
+        path: '/', // e.g http://127.0.1:9000/
         component: () => import('@/views/index.js')
     }
 ],document.querySelector('.webvr-container')

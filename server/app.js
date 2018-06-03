@@ -1,7 +1,14 @@
+
 const WebSocket = require('ws');
+const port = 8086;
 const Room = require('./room.js');
-const wss = new WebSocket.Server({ port: 8086 });
-let globalOnlineCount = 0;
+
+const MSG_TYPES = {
+    SELF_CONNECTED: 'SELF_CONNECTED',
+    OTHER_CONNECTED: 'OTHER_CONNECTED'
+}
+
+const wss = new WebSocket.Server({ port });
 let room = new Room();
 wss.on('connection', function connection(ws) {
     connectionFeedback(wss,ws); // 新用户连接，通知该用户其他用户的userId，通知其他用户该用户的userId
@@ -10,19 +17,19 @@ wss.on('connection', function connection(ws) {
         sendMsg(wss,ws,msg);
     });
 });
-function createRoleData(index) {
-
-    return roleDataSet[index];
-}
 function connectionFeedback(wss,ws) {
      // 用户连接，发送给该用户其他上线用户userId和roleData列表，并生成该用户userId，再将userId广播给其他用户
-     const useridlist = Array.from(wss.clients).filter(client => client.userId).map(client => client.userId);
+    const useridlist = Array.from(wss.clients).filter(client => client.userId).map(client => client.userId);
     room.check(useridlist);
-    const userId = `用户${Date.now()}`;
+    const userId = Date.now() + '';
+    console.log(userId,'connect success');
+    console.log('the room has',room.userNumber,'people')
     const otherDataList = room.getUserDataList();
     const roleData = room.addUser(userId);
+    // 连接成功，通知该用户，其他客户端信息
     let msg = {
-        msg_type: 'I_JOIN',
+        msg_type: MSG_TYPES.SELF_CONNECTED,
+        userId,
         content: {
             roleData, // 给用户分配位置
             userDataList: otherDataList
@@ -34,13 +41,13 @@ function connectionFeedback(wss,ws) {
         writable: false,
         value: userId
     });
-    // ------
+    // 通知其他客户端，该用户已上线
     msg = {
-        msg_type: 'OTHER_JOIN',
+        msg_type: MSG_TYPES.OTHER_CONNECTED,
+        userId,
         content: {
             roleData
-        },
-        userId
+        }
     };
     broadcast(wss,ws,msg);
 }
