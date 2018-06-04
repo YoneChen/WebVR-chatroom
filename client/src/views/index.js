@@ -2,7 +2,7 @@
 import {VRScene} from '@/core';
 import UserPeer from '@/utils/userPeer';
 import {SelfRole,OtherRole,Space,Button} from '@/components';
-import CONFIG from '@/config'
+import CONFIG from '../../config'
 import '@/lib/GLTFLoader';
 class Chatroom extends VRScene {
     start() {
