@@ -14,7 +14,7 @@ const config = {
     },
     production: {
         ...defaultConfig,
-        socketUrl:  "wss://www.yonechen.com/webvr-chat/"
+        socketUrl:  "wss://www.yonechen.com/webvr-chatroom/wss"
     }
 }
 const env = process.env.NODE_ENV || "production";
