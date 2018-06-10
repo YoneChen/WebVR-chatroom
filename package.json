@@ -1,7 +1,7 @@
 {
   "name": "webvr-chatroom",
   "version": "3.3.0",
-  "description": "A webvr project for three.js, es6/7, webpack and postcss",
+  "description": "A webvr chatroom project for three.js",
   "scripts": {
     "start": "npm run client & npm run server",
     "client": "NODE_ENV=development webpack-dev-server --mode development --config ./client/webpack.config.js",
@@ -10,22 +10,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YorkChan94/webvr-webpack-boilerplate.git"
+    "url": "git+https://github.com/YorkChan94/webvr-chatroom.git"
   },
   "keywords": [
     "webvr",
     "three",
     "webpack",
-    "starter",
-    "postcss",
-    "es6"
+    "chatroom",
+    "webrtc",
+    "websocket"
   ],
   "author": "Yone Chen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/YoneChen/webvr-webpack-boilerplate/issues"
+    "url": "https://github.com/YoneChen/webvr-chatroom/issues"
   },
-  "homepage": "https://github.com/YoneChen/webvr-webpack-boilerplater#readme",
+  "homepage": "https://github.com/YoneChen/webvr-chatroom#readme",
   "dependencies": {
     "@tweenjs/tween.js": "^17.2.0",
     "cannon": "^0.6.2",
