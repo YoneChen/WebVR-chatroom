@@ -1,5 +1,5 @@
 {
-  "name": "webvr-webpack-boilerplate",
+  "name": "webvr-chatroom",
   "version": "3.3.0",
   "description": "A webvr project for three.js, es6/7, webpack and postcss",
   "scripts": {
