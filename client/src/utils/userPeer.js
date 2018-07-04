@@ -1,7 +1,6 @@
 
 import 'webrtc-adapter';
 import UserSocket from './userSocket';
-const noop = () => {};
 const MSG_TYPES = {
     SELF_CONNECTED: 'SELF_CONNECTED',
     OTHER_CONNECTED: 'OTHER_CONNECTED',

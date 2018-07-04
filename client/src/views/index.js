@@ -8,7 +8,6 @@ class Chatroom extends VRScene {
     start() {
         this.roleSet = {};
         this.otherDataList = [];
-        const { MODEL_ROBOT } = this.assets;
         this.addSpace();
         this.addDirectLight();
         this.userPeer = new UserPeer({
